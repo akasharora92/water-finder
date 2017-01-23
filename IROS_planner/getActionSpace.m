@@ -1,8 +1,10 @@
-function [action_space] = getActionSpace(robot_pos, rem_budget, MapParameters)
+function [action_space] = getActionSpace(robot, MapParameters)
 %this function takes in the current mission status and returns the robot's
 %action space
 
-%action space without constraints
+robot_pos = [robot.xpos, robot.ypos];
+
+%action space without constraints. Up, down, left, right and 2 sensors
 action_space_orig(1,:) = [robot_pos(1), robot_pos(2), 2];
 action_space_orig(2,:) = [robot_pos(1), robot_pos(2), 3];
 action_space_orig(3,:) = [robot_pos(1), robot_pos(2) + 1, 1];
@@ -17,11 +19,11 @@ for i=1:size(action_space_orig,1)
     safeAction = 1;
     
     if action_space_orig(i,3) == 2
-        new_rem = rem_budget - MapParameters.cost_NIR;
+        new_rem = robot.rem_budget - MapParameters.cost_NIR;
     elseif action_space_orig(i,3) == 3
-        new_rem = rem_budget - MapParameters.cost_NSS;
+        new_rem = robot.rem_budget - MapParameters.cost_NSS;
     else
-        new_rem = rem_budget - MapParameters.cost_mov;
+        new_rem = robot.rem_budget - MapParameters.cost_mov;
     end
     
     %check if position lies within the map
@@ -30,7 +32,7 @@ for i=1:size(action_space_orig,1)
     elseif ((robot_pos(2) < 1) || (robot_pos(2) > MapParameters.ysize))
         safeAction = 0;
     %check if sensing action is within budget if goal is to be reached
-    elseif new_rem < getGoalCost(robot_pos, MapParameters)
+    elseif new_rem < getGoalCost(robot_pos, robot)
         safeAction = 0;
     end
     

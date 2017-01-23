@@ -11,6 +11,9 @@ robot.rem_budget = 0;
 robot.goal_x = 10;
 robot.goal_y = 10;
 
+MapParameters.xsize = 10;
+MapParameters.ysize = 10;
+
 for i = 1:length(sim_runs)
     %for each simulation run, clear belief spaces
     
@@ -18,7 +21,9 @@ for i = 1:length(sim_runs)
     robot.xpos = 1;
     robot.ypos = 1;
     
-    [robot, BeliefMaps] = clearMemory(robot, MapParameters, DomainKnowledge);
+    %clear robot memory
+    robot.visibility = zeros(MapParameters.xsize, MapParameters.ysize);
+    rob
     
     robot.rem_budget = robot.sensing_budget;
     
@@ -26,7 +31,7 @@ for i = 1:length(sim_runs)
     while (rem_budget > 0)
         
         %get best action
-        [best_action] = planner1(robot, BeliefMaps, MapParameters);
+        [best_action] = planner1(robot, bel_space, MapParameters);
         
         %execute action and update robot position
         robot.xpos = best_action.x;
@@ -36,7 +41,7 @@ for i = 1:length(sim_runs)
         [Z_new] = querySim(best_action.x, best_action.y, best_action.mode);
         
         %update beliefs
-        [BeliefMaps] = updateBelief(BeliefMaps, Z_new);
+        [bel_space] = updateBelief(bel_space, Z_new);
         
         %update remaining budget
         if best_action.mode == 1
