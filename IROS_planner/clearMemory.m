@@ -10,15 +10,28 @@ robot.visibilityNSS = zeros(MapParameters.xsize, MapParameters.ysize);
 BeliefMaps.Terrain = cell(MapParameters.xsize,MapParameters.ysize);
 BeliefMaps.Water = cell(MapParameters.xsize,MapParameters.ysize);
 
-%BeliefMaps.theta = initialise Dirichlet based on DK hyperparameters
+BeliefMaps.hyptheta = DKnowledge.thetaprior;
+
+%sum of the hyperparameters in each row
+hyp_sum = sum(BeliefMaps.hyptheta,2);
+
+BeliefMaps.theta = BeliefMaps.hyptheta./[hyp_sum, hyp_sum, hyp_sum];
+
+%Theta array conditional probability table
+  %%%%%%%%%%%%%%%%%
+%           W      %
+%     | 1 | 2 | 3 |
+%   1 |
+% T 2 |
+%   3 |
 
 %use initial estimate of theta to set prior for water distribution
-%priorWater = DomainKnowledge.theta_rl*priorLoc';
+priorWater = BeliefMaps.theta'*DKnowledge.pTerrain;
 
 %initialise terrain and water belief maps
 for i = 1:numel(BeliefMaps.Terrain)
     BeliefMaps.Terrain(i) = {DKnowledge.pTerrain};
-    BeliefMaps.Water(i)   = {DKnowledge.pWater};
+    BeliefMaps.Water(i)   = {priorWater};
 end
 
 end
