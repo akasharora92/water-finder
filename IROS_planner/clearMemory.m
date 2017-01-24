@@ -7,7 +7,7 @@ robot.visibilityNIR = zeros(MapParameters.xsize, MapParameters.ysize);
 robot.visibilityNSS = zeros(MapParameters.xsize, MapParameters.ysize);
 
 %initialise beliefs
-BeliefMaps.Terain = cell(MapParameters.xsize,MapParameters.ysize);
+BeliefMaps.Terrain = cell(MapParameters.xsize,MapParameters.ysize);
 BeliefMaps.Water = cell(MapParameters.xsize,MapParameters.ysize);
 
 %BeliefMaps.theta = initialise Dirichlet based on DK hyperparameters

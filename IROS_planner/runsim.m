@@ -36,7 +36,7 @@ for i = 1:length(sim_runs)
         [Z_new] = querySim(best_action.x, best_action.y, best_action.mode);
         
         %update beliefs
-        [BeliefMaps] = updateBelief(BeliefMaps, Z_new);
+        [BeliefMaps] = updateBelief(robot, BeliefMaps, Z_new, DKnowledge);
         
         %update remaining budget
         if best_action.mode == 1
