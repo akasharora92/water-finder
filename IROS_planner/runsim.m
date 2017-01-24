@@ -17,36 +17,44 @@ for i = 1:length(sim_runs)
     %set start positions
     robot.xpos = 1;
     robot.ypos = 1;
+    robot.mode = 1;
     
-    [robot, BeliefMaps] = clearMemory(robot, MapParameters, DomainKnowledge);
+    [robot, BeliefMaps] = clearMemory(robot, MapParameters, DKnowledge);
     
     robot.rem_budget = robot.sensing_budget;
     
     %keep iterating until the budget is zero
     while (rem_budget > 0)
-        
-        %get best action
-        [best_action] = planner1(robot, BeliefMaps, MapParameters);
-        
-        %execute action and update robot position
-        robot.xpos = best_action.x;
-        robot.ypos = best_action.y;
-        
         %get observation- query simulator
-        [Z_new] = querySim(best_action.x, best_action.y, best_action.mode);
+        [Z_new] = querySim(robot.xpos, robot.ypos, robot.mode);
         
         %update beliefs
         [BeliefMaps] = updateBelief(robot, BeliefMaps, Z_new, DKnowledge);
         
         %update remaining budget
-        if best_action.mode == 1
-           robot.rem_budget = robot.rem_budget - robot.cost_mov; 
-        elseif best_action.mode == 2
-            robot.rem_budget = robot.rem_budget - robot.cost_NIR; 
+        if robot.mode == 1
+            robot.rem_budget = robot.rem_budget - robot.cost_mov;
+        elseif robot.mode == 2
+            robot.rem_budget = robot.rem_budget - robot.cost_NIR;
         else
-            robot.rem_budget = robot.rem_budget - robot.cost_NSS; 
+            robot.rem_budget = robot.rem_budget - robot.cost_NSS;
         end
-             
+        
+        %get best action
+        [best_action, best_reward] = planner1(robot, BeliefMaps, MapParameters);
+        
+        %execute action and update robot position
+        robot.xpos = best_action(1);
+        robot.ypos = best_action(2);
+        robot.mode = best_action(3);
+        
+        disp('Best action is:')
+        disp([robot.xpos, robot.ypos])
+        disp('Best reward:')
+        disp(best_reward);
+        
+
+        
     end
     
     

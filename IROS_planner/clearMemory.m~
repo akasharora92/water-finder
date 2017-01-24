@@ -15,7 +15,7 @@ BeliefMaps.hyptheta = DKnowledge.thetaprior;
 %sum of the hyperparameters in each row
 hyp_sum = sum(BeliefMaps.hyptheta,2);
 
-BeliefMaps.theta = BeliefMaps.hyptheta./[hyp_sum, hyp_sum, hyp_sum];
+BeliefMaps.theta = [1/hyp_sum, 1/hyp_sum, 1/hyp_sum ].*BeliefMaps.hyptheta;
 
 %Theta array conditional probability table
   %%%%%%%%%%%%%%%%%
@@ -24,6 +24,7 @@ BeliefMaps.theta = BeliefMaps.hyptheta./[hyp_sum, hyp_sum, hyp_sum];
 %   1 |
 % T 2 |
 %   3 |
+
 
 %use initial estimate of theta to set prior for water distribution
 priorWater = BeliefMaps.theta'*DKnowledge.pTerrain;

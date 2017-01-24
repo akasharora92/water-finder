@@ -67,16 +67,15 @@ elseif sense_choice == 2
     %update Dirichlet distribution
     prior_dist = BeliefMaps.hyptheta;
     
-    %calculating new hyperparameters
+    %cal
     update_mat = zeros(3,3);
-    T_type = BeliefMaps.Terrain{obs_x, obs_y} == 1;
+    T_type = find(BeliefMaps.Terrain{obs_x, obs_y} == 1);
     update_mat(T_type, :) = posterior_W';
-    BeliefMaps.hyptheta = prior_dist + update_mat;
+    prior_dist = prior_dist + update_mat;
     
     %sum of the hyperparameters in each row
     hyp_sum = sum(BeliefMaps.hyptheta,2);
     
-    %update expectation matrix
     BeliefMaps.theta = BeliefMaps.hyptheta./[hyp_sum, hyp_sum, hyp_sum];
     
     
@@ -93,20 +92,8 @@ else
     posterior_W = (1/sum(posterior_W)).*posterior_W;
     BeliefMaps.Water{obs,obs_y} = posterior_W;
     
+    
     %update Dirichlet distribution
-    prior_dist = BeliefMaps.hyptheta;
-    
-    %calculating new hyperparameters
-    update_mat = zeros(3,3);
-    T_type = BeliefMaps.Terrain{obs_x, obs_y} == 1;
-    update_mat(T_type, :) = posterior_W';
-    BeliefMaps.hyptheta = prior_dist + update_mat;
-    
-    %sum of the hyperparameters in each row
-    hyp_sum = sum(BeliefMaps.hyptheta,2);
-    
-    %update expectation matrix
-    BeliefMaps.theta = BeliefMaps.hyptheta./[hyp_sum, hyp_sum, hyp_sum];
     
 end
 
