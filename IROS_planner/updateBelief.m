@@ -1,4 +1,4 @@
-function [BeliefMaps] = updateBelief(robot, BeliefMaps, Z_new, DKnowledge)
+function [BeliefMaps] = updateBelief(robot, BeliefMaps, Z_new, DKnowledge,MapParameters)
 %updates the belief over the terrain, water and theta based on the new
 %observation
 
@@ -32,7 +32,7 @@ if sense_choice == 1
     
     %apply spatial update using gaussian kernel + Bayes update
     for i=1:MapParameters.xsize
-        for j=1:MapParameter.ysize
+        for j=1:MapParameters.ysize
             %get influence of observation on a cell
             weighting = getweighting([obs_x, obs_y], [i,j]);
             new_update = weighting*newupdate + (1-weighting)*[1/3; 1/3; 1/3];
@@ -62,7 +62,7 @@ elseif sense_choice == 2
     %bayes update
     posterior_W = prior_W.*s_likelihood';
     posterior_W = (1/sum(posterior_W)).*posterior_W;
-    BeliefMaps.Water{obs,obs_y} = posterior_W;
+    BeliefMaps.Water{obs_x,obs_y} = posterior_W;
     
     %update Dirichlet distribution
     prior_dist = BeliefMaps.hyptheta;

@@ -1,8 +1,13 @@
 %initialise simulation parameters and structures
+function [MapParameters,DKnowledge,sim_world] = init(map_data_filename)
+
+sim_world = simulation(map_data_filename);
+
+[x_bounds,y_bounds] = sim_world.get_bounds();
 
 %Simulation map parameters
-MapParameters.xsize = 10;
-MapParameters.ysize = 10;
+MapParameters.xsize = x_bounds(2);
+MapParameters.ysize = y_bounds(2);
 MapParameters.gaussianstd = 1;
 
 
@@ -21,6 +26,7 @@ DKnowledge.thetaprior = [1 1 1;1 1 1;1 1 1];
 % NIR 2 |
 %     3 |
 
+DKnowledge.NIR_TYPE = 2;
 DKnowledge.NIR = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8]';
 
 
@@ -32,7 +38,7 @@ DKnowledge.NIR = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8]';
 %     1 |
 % NSS 2 |
 %     3 |
+DKnowledge.NSS_TYPE = 3;
 DKnowledge.NSS   = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8]';
 
-
-
+end

@@ -19,14 +19,15 @@ for i=1:size(action_space_orig,1)
     safeAction = 1;
     
     if action_space_orig(i,3) == 2
-        new_rem = robot.rem_budget - MapParameters.cost_NIR;
+        new_rem = robot.rem_budget - robot.cost_NIR;
     elseif action_space_orig(i,3) == 3
-        new_rem = robot.rem_budget - MapParameters.cost_NSS;
+        new_rem = robot.rem_budget - robot.cost_NSS;
     else
-        new_rem = robot.rem_budget - MapParameters.cost_mov;
+        new_rem = robot.rem_budget - robot.cost_mov;
     end
     
     %check if position lies within the map
+    robot_pos = action_space_orig(i,1:2);
     if ((robot_pos(1) < 1) || (robot_pos(1) > MapParameters.xsize))
         safeAction = 0;
     elseif ((robot_pos(2) < 1) || (robot_pos(2) > MapParameters.ysize))
