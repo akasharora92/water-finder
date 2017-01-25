@@ -28,20 +28,25 @@ function make_map()
             y_diff = seeds(:,2) - y;
             dist = x_diff.*x_diff + y_diff.*y_diff;
             [v,idx] = min(dist);
-            map_data(y,x) = labels(idx);
+            map_data(x,y) = labels(idx);
             terrain_hist = zeros(1,num_terrain_types);
             terrain_hist(labels(idx)) = 1;
-            noisy_map{y,x} = corrupt(terrain_hist);
-            water_map(y,x,:) = dirichlet(terrain_to_water(labels(idx),:));
+            noisy_map{x,y} = corrupt(terrain_hist);
+            water_map(x,y,:) = dirichlet(terrain_to_water(labels(idx),:));
         end
     end
+    
+    out_data{1} = map_data;
+    out_data{2} = noisy_map;
+    out_data{3} = water_map;
    
-    figure(1);
+    figure();
     image(map_data,'CDataMapping','scaled');
-    figure(2);
+    figure();
     image(water_map,'CDataMapping','scaled')
     colorbar
     
+    save('map_data.mat','out_data');
 end 
 
 function new_hist = corrupt(terrain_hist)

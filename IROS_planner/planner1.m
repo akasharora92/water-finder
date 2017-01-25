@@ -5,6 +5,9 @@ function [best_action, max_reward] = planner1(robot, bel_space, MapParameters)
 action_space = getActionSpace( robot, MapParameters);
 reward_action = zeros(size(action_space,1),1);
 
+if isempty(action_space)
+   disp('empty') 
+end
 %iterate through actions to find reward
 for i = 1:size(action_space,1)
     reward_action(i) = getReward_1(action_space(i,:), robot, bel_space, MapParameters);
