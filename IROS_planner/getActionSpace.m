@@ -6,11 +6,12 @@ robot_pos = [robot.xpos, robot.ypos];
 
 %action space without constraints. Up, down, left, right and 2 sensors
 action_space_orig(1,:) = [robot_pos(1), robot_pos(2), 2];
-action_space_orig(2,:) = [robot_pos(1), robot_pos(2), 3];
-action_space_orig(3,:) = [robot_pos(1), robot_pos(2) + 1, 1];
-action_space_orig(4,:) = [robot_pos(1) + 1, robot_pos(2), 1];
-action_space_orig(5,:) = [robot_pos(1), robot_pos(2) - 1, 1];
-action_space_orig(6,:) = [robot_pos(1) - 1, robot_pos(2), 1];
+%Only using NIR for the toy problem
+%action_space_orig(2,:) = [robot_pos(1), robot_pos(2), 3];
+action_space_orig(2,:) = [robot_pos(1), robot_pos(2) + 1, 1];
+action_space_orig(3,:) = [robot_pos(1) + 1, robot_pos(2), 1];
+action_space_orig(4,:) = [robot_pos(1), robot_pos(2) - 1, 1];
+action_space_orig(5,:) = [robot_pos(1) - 1, robot_pos(2), 1];
 
 %initialise action space
 action_space = [];

@@ -12,7 +12,7 @@ robot.goal_x = 10;
 robot.goal_y = 10;
 
 
-for i = 1:length(sim_runs)
+for k = 1:length(sim_runs)
     %for each simulation run, clear belief spaces
     % TODO: Load different maps based on the simulation run.
     [MapParameters,DKnowledge,sim_world] = init('map_data.mat');
@@ -35,7 +35,7 @@ for i = 1:length(sim_runs)
         [Z_new] = querySim(sim_world,robot.xpos, robot.ypos, robot.sensor_type,DKnowledge);
         
         %update beliefs
-        [BeliefMaps] = updateBelief(robot, BeliefMaps, Z_new, DKnowledge,MapParameters);
+        [BeliefMaps, robot, ~] = updateBelief(robot, BeliefMaps, Z_new, DKnowledge,MapParameters);
         
         %update remaining budget
         if robot.sensor_type == 1
@@ -47,7 +47,7 @@ for i = 1:length(sim_runs)
         end
         
         %get best action
-        [best_action, best_reward] = planner1(robot, BeliefMaps, MapParameters);
+        [best_action, best_reward] = planner1(robot, BeliefMaps, MapParameters, DKnowledge);
         
         %execute action and update robot position
         if ~isempty(best_action)
@@ -77,22 +77,46 @@ for i = 1:length(sim_runs)
     scatter(trajectory(:,1),trajectory(:,2));
     disp(total_reward);
     
-    terrain_img = zeros(MapParameters.xsize,MapParameters.ysize,3);
-    water_img = zeros(MapParameters.xsize,MapParameters.ysize,3);
-    for i = 1:MapParameters.xsize
-        for j=1:MapParameters.ysize
-            terrain_img(i,j,:) = reshape(BeliefMaps.Terrain{i,j},1,3);
-            water_img(i,j,:) = reshape(BeliefMaps.Water{i,j},1,3);
-        end
-    end
+    %terrain_img = zeros(MapParameters.xsize,MapParameters.ysize,3);
+    %water_img = zeros(MapParameters.xsize,MapParameters.ysize,3);
+%     for i = 1:MapParameters.xsize
+%         for j=1:MapParameters.ysize
+%             terrain_img(i,j,:) = reshape(BeliefMaps.Terrain{i,j},1,3);
+%             water_img(i,j,:) = reshape(BeliefMaps.Water{i,j},1,3);
+%         end
+%     end
     
+%     figure();
+%     [V,I] = max(terrain_img,[],3);
+%     image(I,'CDataMapping','scaled');
+%     colorbar
+%     figure();
+%     image(water_img,'CDataMapping','scaled');
+%     colorbar
+
     disp(actions);
     
-    figure();
-    [V,I] = max(terrain_img,[],3);
-    image(I,'CDataMapping','scaled');
-    colorbar
-    figure();
-    image(water_img,'CDataMapping','scaled');
-    colorbar
+    terrain_img = zeros(MapParameters.xsize, MapParameters.ysize, 3);
+    water_img = zeros(MapParameters.xsize, MapParameters.ysize, 3);
+  
+    for i = 1:MapParameters.xsize
+        for j=1:MapParameters.ysize
+            terrain_img(i,j,:) = BeliefMaps.Terrain{i,j};
+            water_img(i,j,:) = BeliefMaps.Water{i,j};
+        end
+    end
+
+
+    figure;
+    subplot(2,2,1), image(terrain_img), title('Terrain belief');
+    subplot(2,2,2), imagesc(water_img), title('Water belief');
+    
+    
+    subplot(2,2,3),imagesc(robot.visibility), title('Robot visibility');
+    
+    %subplot(2,2,4), imagesc(water_img), title('Water ground truth');
+    
+    pause(0.1);
+    
+    
 end

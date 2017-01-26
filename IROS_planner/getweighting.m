@@ -3,7 +3,7 @@ function weighting = getweighting(obs_loc, current_loc)
 
 dist = sqrt((obs_loc(1) - current_loc(1))^2 + (obs_loc(2) - current_loc(2))^2);
 
-weighting = exp(-10.*(dist.^2));
+weighting = exp(-0.2.*(dist.^2));
 
 end
 
