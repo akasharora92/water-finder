@@ -27,7 +27,8 @@ DKnowledge.thetaprior = [1 1 1;1 1 1;1 1 1];
 %     3 |
 
 DKnowledge.NIR_TYPE = 2;
-DKnowledge.NIR = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8]';
+%DKnowledge.NIR = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8]';
+DKnowledge.NIR = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9]';
 
 
 %P(Z_NSS|W)

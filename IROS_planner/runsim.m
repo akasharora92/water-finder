@@ -2,7 +2,7 @@
 
 sim_runs = 1;
 
-robot.sensing_budget = 50;
+robot.sensing_budget = 100;
 robot.cost_mov = 1;
 robot.cost_NIR = 5;
 robot.cost_NSS = 5;
@@ -114,7 +114,7 @@ for k = 1:length(sim_runs)
     
     subplot(2,2,3),imagesc(robot.visibility), title('Robot visibility');
     
-    %subplot(2,2,4), imagesc(water_img), title('Water ground truth');
+    subplot(2,2,4), imagesc(robot.visibilityNIR), title('Robot NIR visibility');
     
     pause(0.1);
     
