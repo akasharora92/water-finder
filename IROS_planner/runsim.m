@@ -67,9 +67,7 @@ for k = 1:length(sim_runs)
             
             disp('Best action is:')
             disp([robot.xpos, robot.ypos])
-            disp('Best reward:')
-            disp(best_reward);
-            total_reward = total_reward + best_reward;
+
             actions = [actions;robot.sensor_type];
         else
             disp('No best action');
@@ -88,7 +86,6 @@ for k = 1:length(sim_runs)
     
     figure();
     scatter(trajectory(:,1),trajectory(:,2));
-    disp(total_reward);
 
     disp(actions);
     

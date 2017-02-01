@@ -122,6 +122,7 @@ for iter = 1:max_iterations
             [~, child_chosen_idx] = max(child_f_score);
             current = current.children(child_chosen_idx);
             
+            %keeps track of all selected nodes from the root node
             state_sequence_init = [state_sequence_init; [current.x_pos, current.y_pos,current.sense_mode]] ;
             
             

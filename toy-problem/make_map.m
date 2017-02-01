@@ -24,14 +24,21 @@ function make_map()
 
     for y=1:map_dim
         for x=1:map_dim
+            %create voronoi map
             x_diff = seeds(:,1) - x;
             y_diff = seeds(:,2) - y;
             dist = x_diff.*x_diff + y_diff.*y_diff;
             [v,idx] = min(dist);
+            
+            %assigning label to the terrain map
             map_data(x,y) = labels(idx);
+            
+            %add noise to the terrain labels
             terrain_hist = zeros(1,num_terrain_types);
-            terrain_hist(labels(idx)) = 1;
+            terrain_hist(labels(idx)) = 1;          
             noisy_map{x,y} = corrupt(terrain_hist);
+            
+            
             water_map(x,y,:) = dirichlet(terrain_to_water(labels(idx),:));
         end
     end
