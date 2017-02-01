@@ -26,7 +26,7 @@ while true
     if isempty(unpicked_children)
         %we can't take any more actions under the budget and goal position constraints
         %exit
-        break;
+        return;
     end
     
     %selecting a random child

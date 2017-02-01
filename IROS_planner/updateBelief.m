@@ -19,7 +19,7 @@ obs_y = Z_new(4);
 % T 2 |
 %   3 |
 
-
+entropy_W = 0;
 
 %check type of observation
 if sense_choice == 1
@@ -52,7 +52,11 @@ if sense_choice == 1
     end
     
 elseif sense_choice == 2
-    if robot.visibilityNIR(obs_x, obs_y) == 0
+    if robot.visibility(obs_x, obs_y) == 0
+        disp('Error!!')
+        return
+        
+    elseif robot.visibilityNIR(obs_x, obs_y) == 0
         robot.visibilityNIR(obs_x, obs_y) = 1;
         %if a NIR observation- just update water type variable distribution
         prior_W = BeliefMaps.Water{obs_x,obs_y};
@@ -67,6 +71,7 @@ elseif sense_choice == 2
         
         %update Dirichlet distribution
         prior_dist = BeliefMaps.hyptheta;
+        
         
         %calculating new hyperparameters
         update_mat = zeros(3,3);
@@ -112,7 +117,7 @@ else
     end
 end
 
-entropy_W = 0;
+
 %update water distribution in unseen cells based on new theta
 for i=1:MapParameters.xsize
     for j=1:MapParameters.ysize

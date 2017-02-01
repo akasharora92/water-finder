@@ -46,18 +46,8 @@ for k = 1:length(sim_runs)
             robot.rem_budget = robot.rem_budget - robot.cost_NSS;
         end
         
-        trajectory = [trajectory; [robot.xpos,robot.ypos, robot.sensor_type]];
-        
         %get best action
-        %[best_action, best_reward] = planner1(robot, BeliefMaps, MapParameters, DKnowledge);
-        
-        %get best action using MCTS default planner- fix inputs and outputs
-        max_iterations = 50;
-        [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
-        
-        %%debugging
-        %disp(winner);
-        %disp(solution);
+        [best_action, best_reward] = planner1(robot, BeliefMaps, MapParameters, DKnowledge);
         
         %execute action and update robot position
         if ~isempty(best_action)
@@ -81,11 +71,8 @@ for k = 1:length(sim_runs)
                 break;
             end
         end
-        
+        trajectory = [trajectory; [robot.xpos,robot.ypos]];
     end
-    
-    
-    
     figure();
     scatter(trajectory(:,1),trajectory(:,2));
     disp(total_reward);

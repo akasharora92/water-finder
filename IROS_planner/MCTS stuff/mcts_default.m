@@ -1,4 +1,6 @@
-function [ solution, root, list_of_all_nodes, winner ] = mcts_default(budget, max_iterations, robot, MapParameters, BeliefMaps, sensor, DomainKnowledge, action_path)
+function [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DomainKnowledge, action_path)
+%this version of MCTS has random rollout policy and evaluates rewards by
+%sampling observations, updating beliefs and calculating information gain
 
 %root node initialisation
 robot_xpos = robot.xpos;
@@ -9,6 +11,8 @@ start_sequence = [];
 %get list of children nodes
 unpicked_children = getActionSpace(robot, MapParameters);
 
+
+
 %%nodes have a x,y position and choice of sensor
 
 sense_mode = 0;
@@ -17,11 +21,20 @@ root = tree_node([], start_sequence, 0, unpicked_children, robot_xpos, robot_ypo
 % for debugging only - store all nodes in a list
 list_of_all_nodes(1) = root;
 
+budget = robot.rem_budget;
+
+if isempty(unpicked_children)
+    best_action = [];
+    solution = 0;
+    return
+end
+
+
 
 %get initial water entropy
 entropy_W = 0;
 for i=1:MapParameters.xsize
-    for j=1:MapParameters.ysize       
+    for j=1:MapParameters.ysize
         prob_W = BeliefMaps.Water{i,j};
         entropy_W = entropy_W - dot(prob_W, log(prob_W));
     end
@@ -31,7 +44,7 @@ end
 % Main loop
 for iter = 1:max_iterations
     
-    disp(['iteration ', num2str(iter)]);
+    %disp(['iteration ', num2str(iter)]);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % SELECTION and EXPANSION
@@ -67,15 +80,15 @@ for iter = 1:max_iterations
             %sequence of sensor measurements made
             new_sequence = [current.sequence, child_vertex(3)];
             
-            robot_new.rem_budget = budget - cost(new_sequence, robot);          
-            robot_new.xpos = child_vertex(1);
-            robot_new.ypos = child_vertex(2);
+            robot.rem_budget = budget - cost(new_sequence, robot);
+            robot.xpos = child_vertex(1);
+            robot.ypos = child_vertex(2);
             sense_mode = child_vertex(3);
             
-            new_unpicked_children = getActionSpace(robot_new, MapParameters);
+            new_unpicked_children = getActionSpace(robot, MapParameters);
             
             % add this child node to the tree
-            new_child_node = tree_node(current, new_sequence, robot_new.rem_budget, new_unpicked_children, robot_new.xpos, robot_new.ypos, sense_mode);
+            new_child_node = tree_node(current, new_sequence, robot.rem_budget, new_unpicked_children, robot.xpos, robot.ypos, sense_mode);
             current.children(end+1) = new_child_node;
             current = new_child_node;
             
@@ -92,7 +105,7 @@ for iter = 1:max_iterations
             % all children have been added, therefore pick one to
             % recurse using UCT policy
             
-            if(isempty(current.children)) 
+            if(isempty(current.children))
                 % there are no more nodes that can be expanded
                 break;
             end
@@ -109,7 +122,9 @@ for iter = 1:max_iterations
             [~, child_chosen_idx] = max(child_f_score);
             current = current.children(child_chosen_idx);
             
-            state_sequence_init = [state_sequence_init; child_vertex];
+            state_sequence_init = [state_sequence_init; [current.x_pos, current.y_pos,current.sense_mode]] ;
+            
+            
             
         end
     end
@@ -122,7 +137,7 @@ for iter = 1:max_iterations
     
     %calculate reward by sampling observations and simulating a belief
     %space update- needs to be fast!
-    [rollout_reward, robot_endstate] = reward_sequence(state_sequence, BeliefMaps, robot, DomainKnowledge, MapParameters, action_path, init_waterent);
+    [rollout_reward, robot_endstate] = reward_sequence(state_sequence, BeliefMaps, robot, DomainKnowledge, MapParameters, action_path, entropy_W);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % BACK-PROPAGATE
@@ -148,7 +163,8 @@ end
 % could be selected in many possible ways...
 % recursively select child with highest average reward
 current = root;
-%while ~isempty(current.children)
+
+%check if there are any children that can be expanded
 
 % get the average reward for all children
 child_reward = zeros(length(current.children),1);
@@ -160,15 +176,21 @@ end
 % choose child with max reward
 [~, child_chosen_idx] = max(child_reward);
 current = current.children(child_chosen_idx);
-%end
 
 winner_score = current.average_evaluation_score;
 winner_UCB = sqrt( (2 * log( current.num_updates ) ) / ( current.parent.num_updates ) );
 
-disp(winner_score)
-disp(winner_UCB)
+
+
+%disp(winner_score)
+%disp(winner_UCB)
 solution = current.sequence;
 winner = current;
+
+best_action(1) = winner.x_pos;
+best_action(2) = winner.y_pos;
+best_action(3) = winner.sense_mode;
+
 
 end
 
