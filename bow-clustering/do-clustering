@@ -1,0 +1,3 @@
+#!/bin/bash
+
+python -u gen_histograms.py ../rost-cli/share/visualwords/surf_vocab/underwater1k.yml /home/furlong/documents/papers/stopping-for-sampling/data/mvp/NIRVISCam/20141018 jpg ~/data/out/NIRVISCAM-20141018.pkl
