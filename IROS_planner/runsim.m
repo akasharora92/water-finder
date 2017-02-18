@@ -28,6 +28,7 @@ for k = 1:length(sim_runs)
     [robot, BeliefMaps] = clearMemory(robot, MapParameters, DKnowledge);
     
     robot.rem_budget = robot.sensing_budget;
+    water_ent = [];
     
     %keep iterating until the budget is zero
     while (robot.rem_budget > 0)
@@ -35,7 +36,7 @@ for k = 1:length(sim_runs)
         [Z_new] = querySim(sim_world,robot.xpos, robot.ypos, robot.sensor_type,DKnowledge);
         
         %update beliefs
-        [BeliefMaps, robot, ~] = updateBelief(robot, BeliefMaps, Z_new, DKnowledge,MapParameters);
+        [BeliefMaps, robot, ent_W] = updateBelief(robot, BeliefMaps, Z_new, DKnowledge,MapParameters);
         
         %update remaining budget
         if robot.sensor_type == 1
@@ -47,6 +48,7 @@ for k = 1:length(sim_runs)
         end
         
         trajectory = [trajectory; [robot.xpos,robot.ypos, robot.sensor_type]];
+        water_ent = [water_ent; ent_W];
         
         %get best action
         %[best_action, best_reward] = planner1(robot, BeliefMaps, MapParameters, DKnowledge);
@@ -83,7 +85,7 @@ for k = 1:length(sim_runs)
     end
     
     
-    
+    %plotting final results
     figure();
     scatter(trajectory(:,1),trajectory(:,2));
 
