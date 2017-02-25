@@ -55,7 +55,9 @@ for k = 1:length(sim_runs)
         
         %get best action using MCTS default planner- fix inputs and outputs
         max_iterations = 50;
-        [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
+        %[ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
+        
+        [ solution, root, list_of_all_nodes, best_action ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
         
         %%debugging
         %disp(winner);
