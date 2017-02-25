@@ -1,4 +1,4 @@
-function make_map()
+function out_data = make_map()
 
     rand_seed = 1209371812;
     rng(rand_seed);
@@ -10,16 +10,18 @@ function make_map()
     num_water_types = 3;
     num_seeds = 10;
 
-    map_dim = 10;
+    map_dim = 40;
 
     map_data = zeros(map_dim,map_dim);
-	water_map = zeros(map_dim,map_dim,num_water_types);
-    noisy_map = cell(map_dim,map_dim);
+		water_map = zeros(map_dim,map_dim);
+    noisy_terrain_map = zeros(map_dim,map_dim);
+		noisy_nss_map = zeros(map_dim,map_dim);
 
     seeds = randi(map_dim,num_seeds,2);
     labels = randi(num_terrain_types,num_seeds,1);
 
     terrain_to_water = [1 1 18; 2 17 1; 17 2 1];
+		nss_noise_model = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8];
    
 
     for y=1:map_dim
@@ -36,21 +38,27 @@ function make_map()
             %add noise to the terrain labels
             terrain_hist = zeros(1,num_terrain_types);
             terrain_hist(labels(idx)) = 1;          
-            noisy_map{x,y} = corrupt(terrain_hist);
+            noisy_terrain_map(x,y) = sample_multinomial(corrupt(terrain_hist));
             
-            
-            water_map(x,y,:) = dirichlet(terrain_to_water(labels(idx),:));
+           	water_val =  sample_multinomial(terrain_to_water(map_data(x,y),:));
+            water_map(x,y) = water_val;
+						noisy_nss_map(x,y) = sample_multinomial(nss_noise_model(water_map(x,y),:));
         end
     end
     
     out_data{1} = map_data;
-    out_data{2} = noisy_map;
+    out_data{2} = noisy_terrain_map;
     out_data{3} = water_map;
+    out_data{4} = noisy_nss_map;
    
     figure();
     image(map_data,'CDataMapping','scaled');
     figure();
+    image(noisy_terrain_map,'CDataMapping','scaled');
+    figure();
     image(water_map,'CDataMapping','scaled')
+    figure();
+    image(noisy_nss_map,'CDataMapping','scaled')
     colorbar
     
     save('map_data.mat','out_data');
@@ -66,4 +74,10 @@ function new_hist = corrupt(terrain_hist)
 		end
 		[v,idx] = max(terrain_hist);
     new_hist = dirichlet(a(idx,:));
+end
+
+function val = sample_multinomial(dist)
+	u = rand();
+	sensor_cdf = cumsum(dist/sum(dist)); %Hack put in, incase dist not normalized
+	val = find(sensor_cdf > u,1);
 end

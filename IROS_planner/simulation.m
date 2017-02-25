@@ -12,8 +12,9 @@ classdef simulation < handle
             obj.map_data = data_struct.out_data;
             obj.current_pos = [1,1];
             obj.true_terrain = 1;
-            obj.terrain_map = 2;
+            obj.noisy_terrain = 2;
             obj.water_map = 3;
+						obj.noisy_nss = 4;
         end
         
         function [x_bounds,y_bounds] = get_bounds(obj)
@@ -24,15 +25,14 @@ classdef simulation < handle
         
         function [cost,t] = move_to(obj,x,y)
             cost = sqrt((obj.current_pos(1)-x)^2 + (obj.current_pos(2)-y)^2);
-            t = obj.map_data{obj.true_terrain}(x,y);
+            t = obj.map_data{obj.noisy_terrain}(x,y);
             obj.current_pos = [x,y];
         end 
         
         function w = sample(obj,x,y,sensor)
             assert(x==obj.current_pos(1) && x > 0);
             assert(y==obj.current_pos(2) && x > 0);
-            w = obj.map_data{obj.water_map}(x,y,:);
-            w = reshape(w,1,3);
+            w = obj.map_data{obj.noisy_nss}(x,y);
         end
     end
 end
