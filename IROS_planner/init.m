@@ -8,7 +8,7 @@ sim_world = simulation(map_data_filename);
 %Simulation map parameters
 MapParameters.xsize = x_bounds(2);
 MapParameters.ysize = y_bounds(2);
-MapParameters.gaussianstd = 1;
+MapParameters.gaussianstd = 0.1;
 
 
 %Domain Knowledge
@@ -28,9 +28,10 @@ DKnowledge.thetaprior = [1 1 1;1 1 1;1 1 1];
 
 DKnowledge.NIR_TYPE = 2;
 %DKnowledge.NIR = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8]';
-DKnowledge.NIR = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9]';
+%DKnowledge.NIR = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9]';
+DKnowledge.NIR = [0.95 0.025 0.025; 0.025 0.95 0.025; 0.025 0.025 0.95];
 
-
+DKnowledge.TNoise = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9]';
 %P(Z_NSS|W)
 %NSS conditional probability table
   %%%%%%%%%%%%%%%%%
@@ -40,6 +41,6 @@ DKnowledge.NIR = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9]';
 % NSS 2 |
 %     3 |
 DKnowledge.NSS_TYPE = 3;
-DKnowledge.NSS   = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9]';
+DKnowledge.NSS =[0.95 0.025 0.025; 0.025 0.95 0.025; 0.025 0.025 0.95]';
 
 end

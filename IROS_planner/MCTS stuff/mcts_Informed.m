@@ -1,4 +1,4 @@
-function [ solution, root, list_of_all_nodes, best_action ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DomainKnowledge, action_path)
+function [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DomainKnowledge, action_path)
 %this version of MCTS has an informed rollout policy and evaluates rewards by
 %sampling observations, updating beliefs and calculating information gain
 
@@ -26,6 +26,7 @@ budget = robot.rem_budget;
 if isempty(unpicked_children)
     best_action = [];
     solution = 0;
+    winner = root;
     return
 end
 
@@ -44,7 +45,7 @@ end
 % Main loop
 for iter = 1:max_iterations
     
-    %disp(['iteration ', num2str(iter)]);
+    disp(['iteration ', num2str(iter)]);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % SELECTION and EXPANSION
@@ -134,11 +135,18 @@ for iter = 1:max_iterations
     % ROLLOUT
     % do a rollout from new node to the budget
     % and evaluate the reward
-    [state_sequence] = rollout_Informed(current, budget, MapParameters, state_sequence_init, robot, BeliefMaps);
+    state_sequence_new = [state_sequence_init];
+    [state_sequence] = rollout_Informed(current,  MapParameters, robot, BeliefMaps);
+    state_sequence_new = [state_sequence_new; state_sequence];
+    
+    %disp('Rollout time for random:');
+    %tic
+    %[state_sequence] = rollout_randompolicy(current, budget, MapParameters, state_sequence_init, robot);
+    %toc
     
     %calculate reward by sampling observations and simulating a belief
     %space update- needs to be fast!
-    [rollout_reward, robot_endstate] = reward_sequence(state_sequence, BeliefMaps, robot, DomainKnowledge, MapParameters, action_path, entropy_W);
+    [rollout_reward, robot_endstate] = reward_sequence(state_sequence_new, BeliefMaps, robot, DomainKnowledge, MapParameters, action_path, entropy_W);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % BACK-PROPAGATE

@@ -1,7 +1,7 @@
 function out_data = make_map()
 
-    rand_seed = 1209371812;
-    rng(rand_seed);
+    %rand_seed = 1209371812;
+    %rng(rand_seed);
 
     
     out_data = cell(3,1); % 1 = truth, 2 = noisy terrain, 3 = noisy water observation.
@@ -10,20 +10,23 @@ function out_data = make_map()
     num_water_types = 3;
     num_seeds = 10;
 
-    map_dim = 40;
+    map_dim = 20;
 
     map_data = zeros(map_dim,map_dim);
-		water_map = zeros(map_dim,map_dim);
+	water_map = zeros(map_dim,map_dim);
     noisy_terrain_map = zeros(map_dim,map_dim);
-		noisy_nss_map = zeros(map_dim,map_dim);
+	noisy_nss_map = zeros(map_dim,map_dim);
 
     seeds = randi(map_dim,num_seeds,2);
     labels = randi(num_terrain_types,num_seeds,1);
 
     terrain_to_water = [1 1 18; 2 17 1; 17 2 1];
-		nss_noise_model = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8];
+	%nss_noise_model = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8];
+    %nss_noise_model = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9];
+    nss_noise_model = [0.95 0.025 0.025; 0.025 0.95 0.025; 0.025 0.025 0.95];
+    %terrain_noise_model = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8];
+    terrain_noise_model = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9];
    
-
     for y=1:map_dim
         for x=1:map_dim
             %create voronoi map
@@ -38,11 +41,16 @@ function out_data = make_map()
             %add noise to the terrain labels
             terrain_hist = zeros(1,num_terrain_types);
             terrain_hist(labels(idx)) = 1;          
-            noisy_terrain_map(x,y) = sample_multinomial(corrupt(terrain_hist));
+            
+            %uses dirichlet to corrupt map
+            %noisy_terrain_map(x,y) = sample_multinomial(corrupt(terrain_hist));
+            
+            %samples from multinomial to corrupt map
+            noisy_terrain_map(x,y) = sample_multinomial(terrain_noise_model(map_data(x,y),:));
             
            	water_val =  sample_multinomial(terrain_to_water(map_data(x,y),:));
             water_map(x,y) = water_val;
-						noisy_nss_map(x,y) = sample_multinomial(nss_noise_model(water_map(x,y),:));
+			noisy_nss_map(x,y) = sample_multinomial(nss_noise_model(water_map(x,y),:));
         end
     end
     
@@ -51,15 +59,15 @@ function out_data = make_map()
     out_data{3} = water_map;
     out_data{4} = noisy_nss_map;
    
-    figure();
-    image(map_data,'CDataMapping','scaled');
-    figure();
-    image(noisy_terrain_map,'CDataMapping','scaled');
-    figure();
-    image(water_map,'CDataMapping','scaled')
-    figure();
-    image(noisy_nss_map,'CDataMapping','scaled')
-    colorbar
+%     figure();
+%     image(map_data,'CDataMapping','scaled');
+%     figure();
+%     image(noisy_terrain_map,'CDataMapping','scaled');
+%     figure();
+%     image(water_map,'CDataMapping','scaled')
+%     figure();
+%     image(noisy_nss_map,'CDataMapping','scaled')
+%     colorbar
     
     save('map_data.mat','out_data');
 end 

@@ -11,6 +11,25 @@ function [ infoGain_tot, robot_current ] = reward_sequence(state_sequence, Belie
 repeatflag = 0;
 robot_current = robot_startstate;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%sample a map
+seedNum = 10;
+
+x_ind = randi([1,MapParameters.xsize], [seedNum,1]);
+y_ind = randi([1,MapParameters.ysize], [seedNum,1]);
+
+seed_index = [x_ind, y_ind];
+
+%assign terrain label to these seeds
+seed_labels = ones(seedNum,1);
+for i=1:seedNum
+   p_dist = BeliefMaps.Terrain{seed_index(i,1), seed_index(i,2)};
+   seed_labels(i) = find(mnrnd(1, p_dist) == 1);
+end
+
+[terrain_map] = createVoronoi(seed_index, seed_labels, MapParameters);
+
+
 ent_W = 1000;
 for i = 1:size(state_sequence,1)
     %simulating a robot
@@ -37,8 +56,10 @@ for i = 1:size(state_sequence,1)
         if sensing_mode == 1
             %standard sensor
             %get predicted observation
-            p_Terrain = BeliefMaps.Terrain{state_sequence(i,1), state_sequence(i,2)};
-            sample_obs = mnrnd(1, p_Terrain);
+            p_Terrain = zeros(3,1);
+            p_Terrain(terrain_map(robot_current.xpos, robot_current.ypos)) = 1;
+            p_obs = DKnowledge.TNoise*p_Terrain;
+            sample_obs = mnrnd(1, p_obs);
             Z_new(1) = find(sample_obs == 1);
             
             

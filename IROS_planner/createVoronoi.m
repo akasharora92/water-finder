@@ -3,6 +3,8 @@ function [ terrain_map ] = createVoronoi( seed_dist, seed_labels, MapParameters 
 
 terrain_map = zeros(MapParameters.xsize, MapParameters.ysize);
 
+%can we compress the map, seed then enlarge?
+
 for x=1:MapParameters.xsize
     for y=1:MapParameters.ysize
         %create voronoi map

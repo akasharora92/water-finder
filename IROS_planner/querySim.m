@@ -5,15 +5,16 @@ Z_new = [0,sensor_type,xpos,ypos];
 obs = 0;
 
 
-if sensor_type == 1
+if sensor_type == 1 %this is correct
     [cost,t] = sim.move_to(xpos,ypos);
     obs = t;
-else
+else %we are noising up twice here?
     %get true value of water in the sim world
     pw_gt = sim.sample(xpos,ypos,sensor_type); %TODO: Deal with multiple sensor types.
     
+    obs = pw_gt;
     %add sensor noise to this
-    obs = noise_up(pw_gt,sensor_type,DKnowledge);
+    %obs = noise_up(pw_gt,sensor_type,DKnowledge);
 end
 
 Z_new(1) = obs;
