@@ -51,11 +51,11 @@ while true
     %get action weights
     for i = 1:size(action_space,1)
         %get occupancy grid in robot's neighbourhood
-        occ_map_xrange = action_space(i,1) - (search_radius):action_space(i,1) + (search_radius);
+        occ_map_xrange = (action_space(i,1) - search_radius):(action_space(i,1) + search_radius);
         occ_map_xrange(occ_map_xrange < 1) = [];
         occ_map_xrange(occ_map_xrange > MapParameters.xsize) = [];
         
-        occ_map_yrange = action_space(i,2) - (search_radius):action_space(i,2) + (search_radius);
+        occ_map_yrange = (action_space(i,2) - search_radius):(action_space(i,2) + search_radius);
         occ_map_yrange(occ_map_yrange < 1) = [];
         occ_map_yrange(occ_map_yrange > MapParameters.ysize) = [];
         
