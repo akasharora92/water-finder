@@ -33,7 +33,8 @@ end
 sensor_states = state_sequence(:,3);
 %counts of terrains visited
 t_idx = find(sensor_states == 1);
-t_counts = terrain_map(sub2ind(size(terrain_map),state_sequence(t_idx,1)', state_sequence(t_idx,2)'));
+t_counts =  terrain_map(sub2ind(size(terrain_map),state_sequence(t_idx,1), state_sequence(t_idx,2)));
+
 t_vector = zeros(3,1);
 for i = 1:length(t_vector)
     t_vector(i) = numel(find(t_counts == i));
@@ -41,7 +42,7 @@ end
 
 %counts of nss in each terrain
 nss_idx = find(sensor_states == 2);
-nss_counts = terrain_map(sub2ind(size(terrain_map),state_sequence(nss_idx,1)', state_sequence(nss_idx,2)'));
+nss_counts = terrain_map(sub2ind(size(terrain_map),state_sequence(nss_idx,1), state_sequence(nss_idx,2)));
 %nss_counts = terrain_map(state_sequence(nss_idx,1), state_sequence(nss_idx,2));
 nss_vector = zeros(3,1);
 for i = 1:length(nss_vector)

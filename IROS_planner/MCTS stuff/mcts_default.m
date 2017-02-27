@@ -44,7 +44,7 @@ end
 % Main loop
 for iter = 1:max_iterations
     
-    %disp(['iteration ', num2str(iter)]);
+    disp(['iteration ', num2str(iter)]);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % SELECTION and EXPANSION

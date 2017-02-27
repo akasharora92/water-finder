@@ -10,7 +10,7 @@ function out_data = make_map()
     num_water_types = 3;
     num_seeds = 10;
 
-    map_dim = 20;
+    map_dim = 30;
 
     map_data = zeros(map_dim,map_dim);
 	water_map = zeros(map_dim,map_dim);
