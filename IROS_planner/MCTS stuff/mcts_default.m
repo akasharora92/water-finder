@@ -114,7 +114,7 @@ for iter = 1:max_iterations
             child_f_score = zeros(length(current.children),1);
             for i = 1:length(child_f_score)
                 % upper confidence bounds
-                expl_const = 1;
+                expl_const = 0.1;
                 child_f_score(i) = current.children(i).average_evaluation_score + expl_const*sqrt((2 * log( current.num_updates ) ) / ( current.children(i).num_updates ) );
             end
             

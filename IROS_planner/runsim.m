@@ -1,8 +1,8 @@
 %this script runs multiple runs of the simulation and plots results]
 
-sim_runs = 20;
+sim_runs = 40;
 
-robot.sensing_budget = 100;
+robot.sensing_budget = 75;
 robot.cost_mov = 1;
 robot.cost_NIR = 5;
 robot.cost_NSS = 5;
@@ -33,11 +33,11 @@ for k = 1:sim_runs
     
     %set start positions
     robot.xpos = 1;
-    robot.ypos = 15;
+    robot.ypos = 10;
     robot.sensor_type = 1;
     
-    robot.goal_x = 30;
-    robot.goal_y = 15;
+    robot.goal_x = 20;
+    robot.goal_y = 10;
 
     [robot, BeliefMaps] = clearMemory(robot, MapParameters, DKnowledge);
     
@@ -88,9 +88,12 @@ for k = 1:sim_runs
         %get best action using MCTS default planner- fix inputs and outputs
         tic
         max_iterations = 100;
+        %switch planners at half of simulations
+        if k > 0.5*sim_runs
         [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
-        
-        %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
+        else
+        [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
+        end
         %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_InformedFastReward(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge);
         time_it = toc;
         time_stamprecord(loop_counter,k) = time_it;
