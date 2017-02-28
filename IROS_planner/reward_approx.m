@@ -13,7 +13,7 @@ robot_current = robot_startstate;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %sample a map
-seedNum = 10;
+seedNum = 20;
 
 x_ind = randi([1,MapParameters.xsize], [seedNum,1]);
 y_ind = randi([1,MapParameters.ysize], [seedNum,1]);

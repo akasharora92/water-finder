@@ -8,9 +8,9 @@ function out_data = make_map()
     
     num_terrain_types = 3;
     num_water_types = 3;
-    num_seeds = 10;
+    num_seeds = 20;
 
-    map_dim = 30;
+    map_dim = 20;
 
     map_data = zeros(map_dim,map_dim);
 	water_map = zeros(map_dim,map_dim);
@@ -59,8 +59,8 @@ function out_data = make_map()
     out_data{3} = water_map;
     out_data{4} = noisy_nss_map;
    
-%     figure();
-%     image(map_data,'CDataMapping','scaled');
+     figure();
+     image(map_data,'CDataMapping','scaled');
 %     figure();
 %     image(noisy_terrain_map,'CDataMapping','scaled');
 %     figure();

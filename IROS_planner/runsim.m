@@ -1,6 +1,6 @@
 %this script runs multiple runs of the simulation and plots results]
 
-sim_runs = 1;
+sim_runs = 20;
 
 robot.sensing_budget = 100;
 robot.cost_mov = 1;
