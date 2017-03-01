@@ -22,14 +22,13 @@ NSS_count = randi([0,max_NSS],1);
 %calculate budget available for exploration
 exp_budget = robot.rem_budget - NSS_count*robot.cost_NSS;
 
+%preallocating memory for speed
 path_size = exp_budget + NSS_count;
 state_sequence = zeros(path_size, 3);
 
 %get occupancy map- convert to integer for speed
 occ_map = double(robot.visibility);
-search_radius = 2;
-
-%state_sequence = [];
+search_radius = 1;
 
 %plan robot path which meets goal and exploratory budget constraints
 
@@ -59,10 +58,13 @@ while true
         occ_map_yrange(occ_map_yrange < 1) = [];
         occ_map_yrange(occ_map_yrange > MapParameters.ysize) = [];
         
-        %drive robot away from areas it has already seen
+        %drive robot towards areas it hasn't seen
         occ_neighbourhood = occ_map(occ_map_xrange, occ_map_yrange);
         weights(i) = numel(occ_neighbourhood(occ_neighbourhood < 1)) + 0.1*numel(occ_neighbourhood(occ_neighbourhood == 1)); 
-        weights(i) = weights(i) - 2*occ_map(action_space(i,1), action_space(i,2));     
+        
+        %additional penalty if the cell the robot is going into has been
+        %seen before
+        weights(i) = weights(i) - occ_map(action_space(i,1), action_space(i,2));     
         
         %prevent zero or negative weights
         if weights(i) <= 0 
@@ -82,16 +84,11 @@ while true
     chosen_action_idx = find(mnrnd(1,weights) == 1); 
     new_child = action_space(chosen_action_idx, :);
     
-    
-    
-    %for overall cost purposes
-    %sequence = [sequence, new_child(3)];
-    
     %add node to sequence
     state_sequence(loop_counter,:) = new_child;
     
     %update values for next loop iteration
-    exp_budget = exp_budget - 1;
+    exp_budget = exp_budget - robot.cost_mov;
     robot.xpos = new_child(1);
     robot.ypos = new_child(2);
     occ_map(robot.xpos, robot.ypos) = 1;
@@ -99,11 +96,13 @@ while true
     loop_counter = loop_counter + 1;
 end
 
-
+%remove empty sequences
 state_sequence(state_sequence(:,1) == 0,:) = [];
 
-%state_sequence = [state_sequence; robotPath];
-
+%exit function if no NSS were used in the simulation
+if NSS_count == 0
+   return 
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %sample a map
@@ -173,9 +172,11 @@ for i=1:NSS_count
     %get indices of parts in the path where chosen terrain was sensed
     t_idx = find(terrain_counts == chosen_terrain);
     
+    %shouldn't enter this loop in theory
     if isempty(t_idx)
-       return 
+       continue
     end
+    
     %gets a random part of the path where chosen terrain was sent
     chosen_idx = t_idx(randi([1,length(t_idx)], 1));
     

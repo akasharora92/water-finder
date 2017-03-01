@@ -4,6 +4,8 @@ function [action_space] = getActionSpace_movement(robot, MapParameters, exp_budg
 
 robot_pos = [robot.xpos, robot.ypos];
 
+action_space_orig = zeros(4,3);
+
 %action space without constraints. Up, down, left, right
 action_space_orig(1,:) = [robot_pos(1), robot_pos(2) + 1, 1];
 action_space_orig(2,:) = [robot_pos(1) + 1, robot_pos(2), 1];
@@ -20,6 +22,7 @@ for i=1:size(action_space_orig,1)
     
     %check if position lies within the map
     robot_pos = action_space_orig(i,1:2);
+    
     if ((robot_pos(1) < 1) || (robot_pos(1) > MapParameters.xsize))
         safeAction = 0;
     elseif ((robot_pos(2) < 1) || (robot_pos(2) > MapParameters.ysize))

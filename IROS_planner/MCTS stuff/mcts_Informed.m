@@ -135,9 +135,8 @@ for iter = 1:max_iterations
     % ROLLOUT
     % do a rollout from new node to the budget
     % and evaluate the reward
-    state_sequence_new = [state_sequence_init];
     [state_sequence] = rollout_Informed(current,  MapParameters, robot, BeliefMaps);
-    state_sequence_new = [state_sequence_new; state_sequence];
+    state_sequence_new = [state_sequence_init; state_sequence];
     
     %disp('Rollout time for random:');
     %tic

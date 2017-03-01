@@ -59,8 +59,8 @@ function out_data = make_map()
     out_data{3} = water_map;
     out_data{4} = noisy_nss_map;
    
-     figure();
-     image(map_data,'CDataMapping','scaled');
+%     figure();
+%     image(map_data,'CDataMapping','scaled');
 %     figure();
 %     image(noisy_terrain_map,'CDataMapping','scaled');
 %     figure();
