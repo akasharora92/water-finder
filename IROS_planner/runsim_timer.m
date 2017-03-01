@@ -1,8 +1,8 @@
 %this script runs multiple runs of the simulation and plots results]
 
-sim_runs = 30;
+sim_runs = 60;
 
-robot.sensing_budget = 75;
+robot.sensing_budget = 100;
 robot.cost_mov = 1;
 robot.cost_NIR = 5;
 robot.cost_NSS = 5;
@@ -17,11 +17,19 @@ water_ent = zeros(robot.sensing_budget, sim_runs);
 robot_budgetrecord = zeros(robot.sensing_budget, sim_runs);
 water_beliefrecord = zeros(9, sim_runs);
 
+planner_switch = 1;
 
 for k = 1:sim_runs
     %for each simulation run, clear belief spaces
     % TODO: Load different maps based on the simulation run.
-
+    
+    if k < 21
+        planner_switch = 1;
+    elseif k < 41
+        planner_switch = 2;
+    else
+        planner_switch = 3;
+    end
     
     %generate random map
     out_data = make_map();
@@ -35,11 +43,11 @@ for k = 1:sim_runs
     
     %set start positions
     robot.xpos = 1;
-    robot.ypos = 10;
+    robot.ypos = 15;
     robot.sensor_type = 1;
     
-    robot.goal_x = 20;
-    robot.goal_y = 10;
+    robot.goal_x = 30;
+    robot.goal_y = 15;
     
     [robot, BeliefMaps] = clearMemory(robot, MapParameters, DKnowledge);
     
@@ -89,15 +97,19 @@ for k = 1:sim_runs
         
         %get best action using MCTS default planner- fix inputs and outputs
         tic
-        max_iterations = 75;
+        max_time = 1;
+        max_iterations = 1000;
         %switch planners at half of simulations
-        %if k > 0.5*sim_runs
-        % [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
-        % else
-        [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
+        if planner_switch == 1
+        [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_InformedFastReward_timer(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, max_time);
+        elseif planner_switch == 2
+        [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed_timer(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory, max_time);
+        else
+        [ solution, root, list_of_all_nodes, best_action ] = mcts_default_timer(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory, max_time);
+        end
         
-        %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_InformedFastReward(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge);
-        time_it = toc;
+       time_it = toc;
+       disp(time_it);
         time_stamprecord(loop_counter,k) = time_it;
         
         %%debugging

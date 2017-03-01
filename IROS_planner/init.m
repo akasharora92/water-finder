@@ -8,7 +8,7 @@ sim_world = simulation(map_data_filename);
 %Simulation map parameters
 MapParameters.xsize = x_bounds(2);
 MapParameters.ysize = y_bounds(2);
-MapParameters.gaussianstd = 0.1;
+MapParameters.gaussianstd = 0.2;
 
 
 %Domain Knowledge

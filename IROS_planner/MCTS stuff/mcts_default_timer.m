@@ -1,5 +1,5 @@
-function [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_InformedFastReward(max_iterations, robot, MapParameters, BeliefMaps, DomainKnowledge)
-%this version of MCTS has an informed rollout policy and evaluates rewards by
+function [ solution, root, list_of_all_nodes, best_action ] = mcts_default_timer(max_iterations, robot, MapParameters, BeliefMaps, DomainKnowledge, action_path, max_time)
+%this version of MCTS has random rollout policy and evaluates rewards by
 %sampling observations, updating beliefs and calculating information gain
 
 %root node initialisation
@@ -26,7 +26,6 @@ budget = robot.rem_budget;
 if isempty(unpicked_children)
     best_action = [];
     solution = 0;
-    winner = root;
     return
 end
 
@@ -41,11 +40,13 @@ for i=1:MapParameters.xsize
     end
 end
 
-
+current_time = 0;
+tic
 % Main loop
 for iter = 1:max_iterations
     
     disp(['iteration ', num2str(iter)]);
+    
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % SELECTION and EXPANSION
@@ -115,7 +116,7 @@ for iter = 1:max_iterations
             child_f_score = zeros(length(current.children),1);
             for i = 1:length(child_f_score)
                 % upper confidence bounds
-                expl_const = 2;
+                expl_const = 0.1;
                 child_f_score(i) = current.children(i).average_evaluation_score + expl_const*sqrt((2 * log( current.num_updates ) ) / ( current.children(i).num_updates ) );
             end
             
@@ -135,19 +136,11 @@ for iter = 1:max_iterations
     % ROLLOUT
     % do a rollout from new node to the budget
     % and evaluate the reward
-    state_sequence_new = [state_sequence_init];
-    [state_sequence] = rollout_Informed(current,  MapParameters, robot, BeliefMaps);
-    state_sequence_new = [state_sequence_new; state_sequence];
-    
-    %disp('Rollout time for random:');
-    %tic
-    %[state_sequence] = rollout_randompolicy(current, budget, MapParameters, state_sequence_init, robot);
-    %toc
+    [state_sequence] = rollout_randompolicy(current, budget, MapParameters, state_sequence_init, robot);
     
     %calculate reward by sampling observations and simulating a belief
     %space update- needs to be fast!
-    %[rollout_reward, robot_endstate] = reward_sequence(state_sequence_new, BeliefMaps, robot, DomainKnowledge, MapParameters, action_path, entropy_W);
-    [ rollout_reward, ~ ] = reward_approx(state_sequence_new, BeliefMaps, robot, DomainKnowledge, MapParameters);
+    [rollout_reward, robot_endstate] = reward_sequence(state_sequence, BeliefMaps, robot, DomainKnowledge, MapParameters, action_path, entropy_W);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % BACK-PROPAGATE
@@ -164,6 +157,10 @@ for iter = 1:max_iterations
         parent = parent.parent;
     end
     
+    current_time = toc;
+    if current_time > max_time
+        break
+    end
     
 end
 
@@ -203,7 +200,5 @@ best_action(3) = winner.sense_mode;
 
 
 end
-
-
 
 

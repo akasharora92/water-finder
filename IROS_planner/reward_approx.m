@@ -72,6 +72,11 @@ for i = 1:length(nss_idx)
     robot_xpos = state_sequence(nss_idx(i),1);
     robot_ypos = state_sequence(nss_idx(i),2);
     
+    %dont' update with NSS if it already has been done before
+    if robot_current.visibilityNIR(robot_xpos, robot_ypos) == 1
+        continue
+    end
+    
     %get terrain label
     prob_T = zeros(3,1);
     prob_T(terrain_map(robot_xpos, robot_ypos)) = 1;
@@ -110,6 +115,8 @@ for i = 1:length(nss_idx)
     
     %update expectation matrix
     BeliefMaps.theta = BeliefMaps.hyptheta./[hyp_sum, hyp_sum, hyp_sum];
+    
+    robot_current.visibilityNIR(robot_xpos, robot_ypos) = 1;
 end
 %calculate change in entropy of theta
 theta_final = BeliefMaps.theta;
@@ -119,7 +126,7 @@ ent_theta_final = -sum(theta_final.*(log(theta_final)),2);
 %creating an occupancy map to represent area. This is an approximation of
 %the new terrain information the rollout is getting
 occ_map = zeros(MapParameters.xsize, MapParameters.ysize);
-radius = 3;
+radius = 2;
 
 for i = 1:size(state_sequence,1)
     %simulating a robot
@@ -136,6 +143,16 @@ for i = 1:size(state_sequence,1)
     
     occ_map(occ_map_xrange, occ_map_yrange) = 1;
         
+end
+
+for i = 1:MapParameters.xsize
+    for j=1:MapParameters.ysize
+        p_terrain = BeliefMaps.Terrain{i,j};
+        entropy_T = - dot(p_terrain, log(p_terrain));
+        if entropy_T < 0.8
+           occ_map(i,j) = 0; 
+        end
+    end
 end
 
 %get proportion of terrains expected to be seen according to occupancy map

@@ -11,6 +11,10 @@ function [ infoGain_tot, robot_current ] = reward_sequence(state_sequence, Belie
 repeatflag = 0;
 robot_current = robot_startstate;
 
+if isempty(state_sequence)
+   infoGain_tot = 0;
+   return;
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %sample a map
 seedNum = 20;

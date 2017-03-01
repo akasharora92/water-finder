@@ -26,8 +26,8 @@ path_size = exp_budget + NSS_count;
 state_sequence = zeros(path_size, 3);
 
 %get occupancy map- convert to integer for speed
-occ_map = int8(robot.visibility);
-search_radius = 1;
+occ_map = double(robot.visibility);
+search_radius = 2;
 
 %state_sequence = [];
 
@@ -94,7 +94,7 @@ while true
     exp_budget = exp_budget - 1;
     robot.xpos = new_child(1);
     robot.ypos = new_child(2);
-    occ_map(robot.xpos, robot.ypos) = int8(1);
+    occ_map(robot.xpos, robot.ypos) = 1;
     
     loop_counter = loop_counter + 1;
 end
@@ -173,6 +173,9 @@ for i=1:NSS_count
     %get indices of parts in the path where chosen terrain was sensed
     t_idx = find(terrain_counts == chosen_terrain);
     
+    if isempty(t_idx)
+       return 
+    end
     %gets a random part of the path where chosen terrain was sent
     chosen_idx = t_idx(randi([1,length(t_idx)], 1));
     
