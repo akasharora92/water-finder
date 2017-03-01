@@ -1,4 +1,4 @@
-function [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DomainKnowledge, action_path)
+function [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_InformedFastReward(max_iterations, robot, MapParameters, BeliefMaps, DomainKnowledge)
 %this version of MCTS has an informed rollout policy and evaluates rewards by
 %sampling observations, updating beliefs and calculating information gain
 
@@ -115,7 +115,7 @@ for iter = 1:max_iterations
             child_f_score = zeros(length(current.children),1);
             for i = 1:length(child_f_score)
                 % upper confidence bounds
-                expl_const = 0.1;
+                expl_const = 2;
                 child_f_score(i) = current.children(i).average_evaluation_score + expl_const*sqrt((2 * log( current.num_updates ) ) / ( current.children(i).num_updates ) );
             end
             
@@ -135,8 +135,9 @@ for iter = 1:max_iterations
     % ROLLOUT
     % do a rollout from new node to the budget
     % and evaluate the reward
+    state_sequence_new = [state_sequence_init];
     [state_sequence] = rollout_Informed(current,  MapParameters, robot, BeliefMaps);
-    state_sequence_new = [state_sequence_init; state_sequence];
+    state_sequence_new = [state_sequence_new; state_sequence];
     
     %disp('Rollout time for random:');
     %tic
@@ -145,7 +146,8 @@ for iter = 1:max_iterations
     
     %calculate reward by sampling observations and simulating a belief
     %space update- needs to be fast!
-    [rollout_reward, robot_endstate] = reward_sequence(state_sequence_new, BeliefMaps, robot, DomainKnowledge, MapParameters, action_path, entropy_W);
+    %[rollout_reward, robot_endstate] = reward_sequence(state_sequence_new, BeliefMaps, robot, DomainKnowledge, MapParameters, action_path, entropy_W);
+    [ rollout_reward, ~ ] = reward_approx(state_sequence_new, BeliefMaps, robot, DomainKnowledge, MapParameters);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % BACK-PROPAGATE

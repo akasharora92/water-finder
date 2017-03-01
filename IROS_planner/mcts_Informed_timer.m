@@ -1,4 +1,4 @@
-function [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DomainKnowledge, action_path)
+function [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed_timer(max_iterations, robot, MapParameters, BeliefMaps, DomainKnowledge, action_path, max_time)
 %this version of MCTS has an informed rollout policy and evaluates rewards by
 %sampling observations, updating beliefs and calculating information gain
 
@@ -135,8 +135,9 @@ for iter = 1:max_iterations
     % ROLLOUT
     % do a rollout from new node to the budget
     % and evaluate the reward
+    state_sequence_new = [state_sequence_init];
     [state_sequence] = rollout_Informed(current,  MapParameters, robot, BeliefMaps);
-    state_sequence_new = [state_sequence_init; state_sequence];
+    state_sequence_new = [state_sequence_new; state_sequence];
     
     %disp('Rollout time for random:');
     %tic
@@ -162,6 +163,10 @@ for iter = 1:max_iterations
         parent = parent.parent;
     end
     
+    current_time = toc;
+    if current_time > max_time
+        break
+    end
     
 end
 
@@ -201,6 +206,8 @@ best_action(3) = winner.sense_mode;
 
 
 end
+
+
 
 
 

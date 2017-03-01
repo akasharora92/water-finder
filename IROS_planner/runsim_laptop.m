@@ -1,8 +1,8 @@
 %this script runs multiple runs of the simulation and plots results]
 
-sim_runs = 30;
+sim_runs = 20;
 
-robot.sensing_budget = 75;
+robot.sensing_budget = 100;
 robot.cost_mov = 1;
 robot.cost_NIR = 5;
 robot.cost_NSS = 5;
@@ -17,11 +17,9 @@ water_ent = zeros(robot.sensing_budget, sim_runs);
 robot_budgetrecord = zeros(robot.sensing_budget, sim_runs);
 water_beliefrecord = zeros(9, sim_runs);
 
-
 for k = 1:sim_runs
     %for each simulation run, clear belief spaces
     % TODO: Load different maps based on the simulation run.
-
     
     %generate random map
     out_data = make_map();
@@ -35,12 +33,12 @@ for k = 1:sim_runs
     
     %set start positions
     robot.xpos = 1;
-    robot.ypos = 10;
+    robot.ypos = 15;
     robot.sensor_type = 1;
     
-    robot.goal_x = 20;
-    robot.goal_y = 10;
-    
+    robot.goal_x = 30;
+    robot.goal_y = 15;
+
     [robot, BeliefMaps] = clearMemory(robot, MapParameters, DKnowledge);
     
     robot.rem_budget = robot.sensing_budget;
@@ -82,20 +80,17 @@ for k = 1:sim_runs
         water_ent(loop_counter,k) = ent_W;
         
         trajectory = [trajectory; [robot.xpos,robot.ypos, robot.sensor_type]];
-        
+       
         
         %get best action
         %[best_action, best_reward] = planner1(robot, BeliefMaps, MapParameters, DKnowledge);
         
         %get best action using MCTS default planner- fix inputs and outputs
         tic
-        max_iterations = 75;
-        %switch planners at half of simulations
-        %if k > 0.5*sim_runs
-        % [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
-        % else
-        [ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
+        max_iterations = 50;
+        [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
         
+        %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
         %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_InformedFastReward(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge);
         time_it = toc;
         time_stamprecord(loop_counter,k) = time_it;
@@ -112,7 +107,7 @@ for k = 1:sim_runs
             
             disp('Best action is:')
             disp([robot.xpos, robot.ypos])
-            
+
             actions = [actions;robot.sensor_type];
         else
             disp('No best action');
@@ -130,26 +125,26 @@ for k = 1:sim_runs
     
     
     %plotting final results
-    % figure();
-    % scatter(trajectory(:,1),trajectory(:,2));
-    
-    % disp(actions);
+   % figure();
+   % scatter(trajectory(:,1),trajectory(:,2));
+
+   % disp(actions);
     
     terrain_img = zeros(MapParameters.xsize, MapParameters.ysize, 3);
     water_img = zeros(MapParameters.xsize, MapParameters.ysize, 3);
-    
+  
     for i = 1:MapParameters.xsize
         for j=1:MapParameters.ysize
             terrain_img(i,j,:) = BeliefMaps.Terrain{i,j};
             water_img(i,j,:) = BeliefMaps.Water{i,j};
         end
     end
-    
+
     water_beliefrecord(:,k) = reshape(BeliefMaps.theta, 9,1);
     figure;
     subplot(3,2,1), image(terrain_img), title('Terrain belief');
-    subplot(3,2,2), imagesc(water_img), title('Water belief');
-    subplot(3,2,3),imagesc(robot.visibility), title('Robot visibility');
+    subplot(3,2,2), imagesc(water_img), title('Water belief');  
+    subplot(3,2,3),imagesc(robot.visibility), title('Robot visibility');   
     subplot(3,2,4), imagesc(robot.visibilityNIR), title('Robot NIR visibility');
     subplot(3,2,5), imagesc(sim_world.map_data{1,1}), title('True terrain');
     subplot(3,2,6), imagesc(sim_world.map_data{3,1}), title('True water map');

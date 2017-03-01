@@ -5,6 +5,8 @@ classdef simulation < handle
         true_terrain;
         terrain_map;
         water_map;
+        noisy_terrain;
+        noisy_nss;
     end
     methods
         function obj=simulation(map_name)
@@ -14,7 +16,7 @@ classdef simulation < handle
             obj.true_terrain = 1;
             obj.noisy_terrain = 2;
             obj.water_map = 3;
-						obj.noisy_nss = 4;
+			obj.noisy_nss = 4;
         end
         
         function [x_bounds,y_bounds] = get_bounds(obj)
