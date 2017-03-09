@@ -1,6 +1,6 @@
 %this script runs multiple runs of the simulation and plots results]
 
-sim_runs = 30;
+sim_runs = 20;
 
 robot.sensing_budget = 75;
 robot.cost_mov = 1;
@@ -17,17 +17,19 @@ water_ent = zeros(robot.sensing_budget, sim_runs);
 robot_budgetrecord = zeros(robot.sensing_budget, sim_runs);
 water_beliefrecord = zeros(9, sim_runs);
 
+%generate random map
+%out_data = make_map();
+[MapParameters,DKnowledge,sim_world] = init();
+    
+true_watermap = sim_world.map_data{3,1};
+    
 
 for k = 1:sim_runs
     %for each simulation run, clear belief spaces
     % TODO: Load different maps based on the simulation run.
 
     
-    %generate random map
-    %out_data = make_map();
-    [MapParameters,DKnowledge,sim_world] = init();
-    
-    true_watermap = sim_world.map_data{3,1};
+
     
     trajectory = [];
     actions = [];
@@ -90,18 +92,20 @@ for k = 1:sim_runs
         %get best action using MCTS default planner- fix inputs and outputs
         tic
         %MCTS variants
+        if k <= 10
         max_iterations = 75;
         [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
         %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);        
         %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_InformedFastReward(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge);
         
+        else
         %Greedy algorithms
         %[best_action, max_reward] = greedy_planner(robot, BeliefMaps, MapParameters, DKnowledge)
         %[best_action, max_reward] = greedy_plannerratio(robot, BeliefMaps, MapParameters, DKnowledge);
         
         %Random action selection algorithm
-        %[best_action] = random_planner(robot, MapParameters);
-        
+        [best_action] = random_planner(robot, MapParameters);
+        end
         time_it = toc;
         time_stamprecord(loop_counter,k) = time_it;
         

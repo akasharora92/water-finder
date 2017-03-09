@@ -1,4 +1,4 @@
-function reward = getReward_2(action_current, robot, BeliefMaps, MapParameters, DKnowledge)
+function reward = greedy_rewardratio(action_current, robot, BeliefMaps, MapParameters, DKnowledge)
 %this function takes in the mission state as well as the robot's belief
 %returns the reward for taking a particular action
 
@@ -50,5 +50,7 @@ end
 reward = (entropy_init - expected_entropy)/cost_a;
 
 end
+
+
 
 
