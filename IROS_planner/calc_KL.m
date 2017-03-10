@@ -5,7 +5,7 @@ true_theta = true_theta./sum(true_theta,1);
 
 %true_theta = 1/3.*ones(3);
 
-test_kl = kl_mcts;
+test_kl = kl_random;
 
 kl_1_mat = zeros(3,size(test_kl,2));
 kl_2_mat = zeros(3,size(test_kl,2));

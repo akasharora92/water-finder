@@ -33,7 +33,7 @@ classdef simulation < handle
         
         function w = sample(obj,x,y,sensor)
             assert(x==obj.current_pos(1) && x > 0);
-            assert(y==obj.current_pos(2) && x > 0);
+            assert(y==obj.current_pos(2) && y > 0);
             w = obj.map_data{obj.noisy_nss}(x,y);
         end
     end
