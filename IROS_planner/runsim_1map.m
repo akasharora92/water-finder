@@ -1,6 +1,6 @@
 %this script runs multiple runs of the simulation and plots results]
 
-sim_runs = 40;
+sim_runs = 25;
 
 robot.sensing_budget = 100;
 robot.cost_mov = 1;
@@ -101,8 +101,7 @@ for k = 1:sim_runs
                 best_action = [];
             else
                 best_action = lawnmower_path(loop_counter,:);
-            end
-            
+            end           
         elseif planner_switch == 2
             %Greedy algorithms
             %[best_action, max_reward] = greedy_planner(robot, BeliefMaps, MapParameters, DKnowledge)
@@ -112,13 +111,15 @@ for k = 1:sim_runs
             %Random action selection algorithm
             [best_action] = random_planner(robot, MapParameters);
             
-        else
+        elseif planner_switch == 4
             %MCTS variants
             max_iterations = 50;
             [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
             %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
             %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_InformedFastReward(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge);
-            
+        else
+            max_iterations = 100;
+            [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
         end
         
         time_it = toc;
@@ -180,7 +181,7 @@ for k = 1:sim_runs
     pause(0.1);
     
     %switch which planner to use
-    if planner_switch == 4
+    if planner_switch == 5
         planner_switch = 1;
     else
         planner_switch = planner_switch + 1;
