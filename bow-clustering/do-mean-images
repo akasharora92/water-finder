@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# python -u make-mean-image.py  ~/data/mvp/GroundCam/20141018 jpg ~/data/out/mean-img-20141018.jpg
+echo "processing"
+python -u make-mean-image.py  ~/data/mvp/GroundCam/20141019 jpg ~/data/out/mean-img-20141019.jpg
+echo "processing."
+python -u make-mean-image.py  ~/data/mvp/GroundCam/20141020 jpg ~/data/out/mean-img-20141020.jpg
+echo "processing.."
+python -u make-mean-image.py  ~/data/mvp/GroundCam/20141021 jpg ~/data/out/mean-img-20141021.jpg
+echo "processing..."
+python -u make-mean-image.py  ~/data/mvp/GroundCam/20141022 jpg ~/data/out/mean-img-20141022.jpg
+echo "processing...."
+python -u make-mean-image.py  ~/data/mvp/GroundCam/20141023 jpg ~/data/out/mean-img-20141023.jpg
+echo "processing....."
+python -u make-mean-image.py  ~/data/mvp/GroundCam/20141024 jpg ~/data/out/mean-img-20141024.jpg
+echo "processing......"
+python -u make-mean-image.py  ~/data/mvp/GroundCam/20141025 jpg ~/data/out/mean-img-20141025.jpg
+echo "processing......."
+python -u make-mean-image.py  ~/data/mvp/GroundCam/20141026 jpg ~/data/out/mean-img-20141026.jpg
+echo "Done!"

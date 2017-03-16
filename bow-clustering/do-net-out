@@ -1,0 +1,5 @@
+#!/bin/bash
+
+python -u ./test-net-out.py ~/data/mvp/GroundCam/ a.txt
+python -u ./test-net-out.py ~/data/mvp/GroundCam/ b.txt
+

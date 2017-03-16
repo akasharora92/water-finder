@@ -1,0 +1,10 @@
+#!/bin/bash
+
+img_in1='~/data/mvp/GroundCam/20141018/GroundCam0-1413657866.030639.jpg'
+img_in2='~/data/mvp/GroundCam/20141018/GroundCam0-1413657614.037181.jpg'
+
+img_out1='~/data/out/feat1.txt'
+img_out2='~/data/out/feat2.txt'
+
+python -u ./test-net-out.py $img_in1 $img_out1
+python -u ./test-net-out.py $img_in2 $img_out2
