@@ -1,4 +1,4 @@
-function out_data = make_map()
+function out_data = make_map(MapParameters, DKnowledge)
 
     %rand_seed = 1209371812;
     %rng(rand_seed);
@@ -8,7 +8,8 @@ function out_data = make_map()
     
     num_terrain_types = 3;
     num_water_types = 3;
-    num_seeds = 20;
+    
+    num_seeds = MapParameters.num_seeds;
 
     map_dim = 20;
 
@@ -20,12 +21,13 @@ function out_data = make_map()
     seeds = randi(map_dim,num_seeds,2);
     labels = randi(num_terrain_types,num_seeds,1);
 
-    terrain_to_water = [1 1 18; 2 17 1; 17 2 1];
-	%nss_noise_model = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8];
-    %nss_noise_model = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9];
-    nss_noise_model = [0.95 0.025 0.025; 0.025 0.95 0.025; 0.025 0.025 0.95];
-    %terrain_noise_model = [0.8 0.1 0.1; 0.1 0.8 0.1; 0.1 0.1 0.8];
-    terrain_noise_model = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9];
+    terrain_to_water = MapParameters.TWCorrelation;
+	
+    nss_noise_model = DKnowledge.NIR;
+    %nss_noise_model = [0.95 0.025 0.025; 0.025 0.95 0.025; 0.025 0.025 0.95];
+    
+    terrain_noise_model = DKnowledge.TNoise;
+    %terrain_noise_model = [0.9 0.05 0.05; 0.05 0.9 0.05; 0.05 0.05 0.9];
    
     for y=1:map_dim
         for x=1:map_dim

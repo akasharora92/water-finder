@@ -1,8 +1,8 @@
 %this script runs multiple runs of the simulation and plots results]
 
-sim_runs = 30;
+sim_runs = 25;
 
-robot.sensing_budget = 75;
+robot.sensing_budget = 100;
 robot.cost_mov = 1;
 robot.cost_NIR = 5;
 robot.cost_NSS = 5;
@@ -17,17 +17,22 @@ water_ent = zeros(robot.sensing_budget, sim_runs);
 robot_budgetrecord = zeros(robot.sensing_budget, sim_runs);
 water_beliefrecord = zeros(9, sim_runs);
 
+%lawnmowever path
+[lawnmower_path ] = planLawnmover();
+
+%trigger to switch planners
+planner_switch = 1;
 
 for k = 1:sim_runs
-    %for each simulation run, clear belief spaces
-    % TODO: Load different maps based on the simulation run.
-
     
-    %generate random map
-    %out_data = make_map();
-    [MapParameters,DKnowledge,sim_world] = init();
+    %generate new map once every planner has been tried
+    if planner_switch == 1
+        %generate random map
+        %out_data = make_map();
+        [MapParameters,DKnowledge,sim_world] = init();
+        true_watermap = sim_world.map_data{3,1};
+    end
     
-    true_watermap = sim_world.map_data{3,1};
     
     trajectory = [];
     actions = [];
@@ -89,18 +94,33 @@ for k = 1:sim_runs
         
         %get best action using MCTS default planner- fix inputs and outputs
         tic
-        %MCTS variants
-        max_iterations = 75;
-        [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
-        %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);        
-        %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_InformedFastReward(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge);
         
-        %Greedy algorithms
-        %[best_action, max_reward] = greedy_planner(robot, BeliefMaps, MapParameters, DKnowledge)
-        %[best_action, max_reward] = greedy_plannerratio(robot, BeliefMaps, MapParameters, DKnowledge);
-        
-        %Random action selection algorithm
-        %[best_action] = random_planner(robot, MapParameters);
+        if planner_switch == 1
+            %lawnmover path
+            if loop_counter > size(lawnmower_path,1)
+                best_action = [];
+            else
+                best_action = lawnmower_path(loop_counter,:);
+            end           
+        elseif planner_switch == 2
+            %Greedy algorithms
+            %[best_action, max_reward] = greedy_planner(robot, BeliefMaps, MapParameters, DKnowledge)
+            [best_action, max_reward] = greedy_plannerratio(robot, BeliefMaps, MapParameters, DKnowledge);
+            
+        elseif planner_switch == 3
+            %Random action selection algorithm
+            [best_action] = random_planner(robot, MapParameters);
+            
+        elseif planner_switch == 4
+            %MCTS variants
+            max_iterations = 50;
+            [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
+            %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_Informed(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
+            %[ solution, root, list_of_all_nodes, best_action, winner ] = mcts_InformedFastReward(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge);
+        else
+            max_iterations = 100;
+            [ solution, root, list_of_all_nodes, best_action ] = mcts_default(max_iterations, robot, MapParameters, BeliefMaps, DKnowledge, trajectory);
+        end
         
         time_it = toc;
         time_stamprecord(loop_counter,k) = time_it;
@@ -159,6 +179,14 @@ for k = 1:sim_runs
     subplot(3,2,5), imagesc(sim_world.map_data{1,1}), title('True terrain');
     subplot(3,2,6), imagesc(sim_world.map_data{3,1}), title('True water map');
     pause(0.1);
+    
+    %switch which planner to use
+    if planner_switch == 5
+        planner_switch = 1;
+    else
+        planner_switch = planner_switch + 1;
+    end
+    
     
     
 end

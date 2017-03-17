@@ -106,7 +106,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %sample a map
-seedNum = 20;
+seedNum = MapParameters.num_seed;
 
 x_ind = randi([1,MapParameters.xsize], [seedNum,1]);
 y_ind = randi([1,MapParameters.ysize], [seedNum,1]);
