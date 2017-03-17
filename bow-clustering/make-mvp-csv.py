@@ -6,7 +6,8 @@ import cPickle as pickle
 import re 
 
 print 'Loading data'
-nss_data = pickle.load(open('/home/pfurlong/data/out/nss-w-probs.pkl','rb'))
+# nss_data = pickle.load(open('/home/pfurlong/data/out/nss-w-probs.pkl','rb'))
+nss_data = pickle.load(open('/home/pfurlong/data/out/nss-restricted-w-probs.pkl','rb'))
 image_data = pickle.load(open('/home/pfurlong/data/out/all-days.pkl','rb'))
 
 print 'Extracting time values'
@@ -54,6 +55,8 @@ for (idx,img_file) in enumerate(img_files):
     ### end if
 ### end for
 
-pickle.dump((out_data,out_vecs),open('/home/pfurlong/data/out/good-data-all.pkl','wb'))
+# pickle.dump((out_data,out_vecs),open('/home/pfurlong/data/out/good-data-all.pkl','wb'))
+# pickle.dump(out_water_probs,open('/home/pfurlong/data/out/gmm/water-probs.pkl','wb'))
+pickle.dump((out_data,out_vecs),open('/home/pfurlong/data/out/good-data-restricted.pkl','wb'))
 pickle.dump(out_water_probs,open('/home/pfurlong/data/out/gmm/water-probs.pkl','wb'))
 

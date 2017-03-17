@@ -48,6 +48,7 @@ def main(filename,outfile):
 #                 exit()
             ### end try
             good_data = ((sn_high_counts > 20) and (sn_high_counts < 150))
+#             good_data = ((sn_high_counts > 20) and (sn_high_counts < 90))
             sn_data.append([time_val,date_val,lat,lon,good_data,sn_high_counts])
         ### end for
 	cPickle.dump(sn_data,open(outfile,'wb'))	

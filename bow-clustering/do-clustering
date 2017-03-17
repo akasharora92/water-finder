@@ -1,3 +1,11 @@
 #!/bin/bash
 
-python -u gen_histograms.py ../rost-cli/share/visualwords/surf_vocab/underwater1k.yml /home/furlong/documents/papers/stopping-for-sampling/data/mvp/NIRVISCam/20141018 jpg ~/data/out/NIRVISCAM-20141018.pkl
+# python -u test-load-nn.py  ~/data/mvp/GroundCam/20141018 jpg ~/data/out/GROUNDCAM-20141018.pkl
+python -u test-load-nn.py  ~/data/mvp/GroundCam/20141019 jpg ~/data/out/GROUNDCAM-20141019.pkl
+python -u test-load-nn.py  ~/data/mvp/GroundCam/20141020 jpg ~/data/out/GROUNDCAM-20141020.pkl
+python -u test-load-nn.py  ~/data/mvp/GroundCam/20141021 jpg ~/data/out/GROUNDCAM-20141021.pkl
+python -u test-load-nn.py  ~/data/mvp/GroundCam/20141022 jpg ~/data/out/GROUNDCAM-20141022.pkl
+python -u test-load-nn.py  ~/data/mvp/GroundCam/20141023 jpg ~/data/out/GROUNDCAM-20141023.pkl
+python -u test-load-nn.py  ~/data/mvp/GroundCam/20141024 jpg ~/data/out/GROUNDCAM-20141024.pkl
+python -u test-load-nn.py  ~/data/mvp/GroundCam/20141025 jpg ~/data/out/GROUNDCAM-20141025.pkl
+python -u test-load-nn.py  ~/data/mvp/GroundCam/20141026 jpg ~/data/out/GROUNDCAM-20141026.pkl

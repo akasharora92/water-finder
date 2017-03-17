@@ -1,10 +1,13 @@
 import numpy as np
-import cv2
 import yaml
 from os import listdir
 import os.path,sys
 import matplotlib.pyplot as plt
 import cPickle
+sys.path.insert(0,'/home/pfurlong/installed/local_root/lib/python2.7/dist-packages/')
+import cv2
+print cv2.__version__
+
 
 def opencv_matrix(loader,node):
     print type(node)
@@ -62,8 +65,9 @@ def iter_files(yaml_filename,img_filenames,out_filename):
         print 'Processing image %d of %d'%(idx,num_imgs)
         histogram = get_histogram(img_name,bow_ext,surf)
         histograms[img_name] = histogram
+        ### end if
     ### end for
-
+    
     print 'saving histogram to ' + out_filename
     with file(out_filename,'wb') as fp:
         cPickle.dump(histograms,fp)
